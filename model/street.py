@@ -1,5 +1,7 @@
 from app import db
 
+from model.address import Address
+
 
 class Street(db.Model):
     id = db.Column(db.Integer, primary_key=True)
