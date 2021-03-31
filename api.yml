@@ -9,19 +9,19 @@ consumes:
 produces:
   - application/json
 basePath: "/api/locations"
-#paths:
-#  /test1/{test1_id}:
-#    get:
-#      tags: [ Test1 ]
-#      operationId: app.get_test1
-#      summary: Testing endpoint
-#      parameters:
-#        - $ref: '#/parameters/test1_id'
-#      responses:
-#        200:
-#          description: Return test1
-#        404:
-#          description: Does not exist
+paths:
+  /test1/{test1_id}:
+    get:
+      tags: [ Test1 ]
+      operationId: app.get_test1
+      summary: Testing endpoint
+      parameters:
+        - $ref: '#/parameters/test1_id'
+      responses:
+        200:
+          description: Return test1
+        404:
+          description: Does not exist
 #  /person/:
 #    post:
 #      tags: [ Person ]
@@ -45,15 +45,15 @@ basePath: "/api/locations"
 #        404:
 #          description: Person not found
 
-#parameters:
-#  test1_id:
-#    name: test1_id
-#    description: Test1 unique id
-#    in: path
-#    type: string
-#    required: true
-#    pattern: "^[a-zA-Z0-9-]+$"
-#
+parameters:
+  test1_id:
+    name: test1_id
+    description: Test1 unique id
+    in: path
+    type: string
+    required: true
+    pattern: "^[a-zA-Z0-9-]+$"
+
 #  person_body:
 #    name: person_body
 #    description: Test1 unique id
