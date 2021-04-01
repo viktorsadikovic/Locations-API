@@ -22,6 +22,67 @@ paths:
           description: Return test1
         404:
           description: Does not exist
+  /bicycle_stores/all:
+    get:
+      tags: [ Bicycle_store ]
+      operationId: endpoint.bicycle_store_endpoints.get_all_bicycle_stores
+      summary: Get all Bicycle_store objects
+      responses:
+        200:
+          description: Return list of Bicycle_store objects
+        404:
+          description: Does not exist
+  /bicycle_stores/{store_id}:
+    get:
+      tags: [ Bicycle_store ]
+      operationId: endpoint.bicycle_store_endpoints.get_single_bicycle_store
+      summary: Get single Bicycle_store object
+      parameters:
+        - $ref: '#/parameters/store_id'
+      responses:
+        200:
+          description: Return Bicycle_store object
+        404:
+          description: Does not exist
+  /bicycle_stores/new/:
+    post:
+        tags: [ Bicycle_store ]
+        operationId: endpoint.bicycle_store_endpoints.add_bicycle_store
+        summary: Add new bicycle store
+        parameters:
+          - $ref: '#/parameters/bicycle_store_body'
+        responses:
+          200:
+            description: Return status
+          409:
+            description: Already exists
+  /bicycle_stores/{store_id}/edit:
+    put:
+      tags: [ Bicycle_store ]
+      operationId: endpoint.bicycle_store_endpoints.edit_bicycle_store
+      summary: Edit Bicycle_store
+      parameters:
+        - $ref: '#/parameters/store_id'
+        - $ref: '#/parameters/bicycle_store_body'
+      responses:
+        200:
+          description: Bicycle store was successfully changed
+        404:
+          description: Does not exist
+  /bicycle_stores/{store_id}/delete:
+    delete:
+      tags: [ Bicycle_store ]
+      operationId: endpoint.bicycle_store_endpoints.delete_bicycle_store
+      summary: Delete Bicycle_store
+      parameters:
+        - $ref: '#/parameters/store_id'
+      responses:
+        200:
+          description: Bicycle store was successfully deleted
+        404:
+          description: Does not exist
+
+
 #  /person/:
 #    post:
 #      tags: [ Person ]
@@ -53,6 +114,45 @@ parameters:
     type: string
     required: true
     pattern: "^[a-zA-Z0-9-]+$"
+  store_id:
+    name: store_id
+    description: Store id
+    in: path
+    type: string
+    required: true
+    pattern: "^[a-zA-Z0-9-]+$"
+  bicycle_store_body:
+    name: bicycle_store_body
+    description: bicycle_store_body
+    in: body
+    schema:
+      required:
+        - name
+        - street_name
+        - street_number
+        - city_name
+        - city_postal_code
+        - country
+        - latitude
+        - longitude
+      properties:
+        name:
+          type: string
+        street_name:
+          type: string
+        street_number:
+          type: integer
+        city_name:
+          type: string
+        city_postal_code:
+          type: integer
+        country:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+
 
 #  person_body:
 #    name: person_body
