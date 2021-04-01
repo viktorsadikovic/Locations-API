@@ -10,6 +10,101 @@ produces:
   - application/json
 basePath: "/api/locations"
 paths:
+  /test1/{test1_id}:
+    get:
+      tags: [ Test1 ]
+      operationId: app.get_test1
+      summary: Testing endpoint
+      parameters:
+        - $ref: '#/parameters/test1_id'
+      responses:
+        200:
+          description: Return test1
+        404:
+          description: Does not exist
+  /bicycle_stores/all:
+    get:
+      tags: [ Bicycle_store ]
+      operationId: endpoint.bicycle_store_endpoints.get_all_bicycle_stores
+      summary: Get all Bicycle_store objects
+      responses:
+        200:
+          description: Return list of Bicycle_store objects
+        404:
+          description: Does not exist
+  /bicycle_stores/{store_id}:
+    get:
+      tags: [ Bicycle_store ]
+      operationId: endpoint.bicycle_store_endpoints.get_single_bicycle_store
+      summary: Get single Bicycle_store object
+      parameters:
+        - $ref: '#/parameters/store_id'
+      responses:
+        200:
+          description: Return Bicycle_store object
+        404:
+          description: Does not exist
+  /bicycle_stores/new/:
+    post:
+      tags: [ Bicycle_store ]
+      operationId: endpoint.bicycle_store_endpoints.add_bicycle_store
+      summary: Add new bicycle store
+      parameters:
+        - $ref: '#/parameters/bicycle_store_body'
+      responses:
+        200:
+          description: Return status
+        409:
+          description: Already exists
+  /bicycle_stores/{store_id}/edit:
+    put:
+      tags: [ Bicycle_store ]
+      operationId: endpoint.bicycle_store_endpoints.edit_bicycle_store
+      summary: Edit Bicycle_store
+      parameters:
+        - $ref: '#/parameters/store_id'
+        - $ref: '#/parameters/bicycle_store_body'
+      responses:
+        200:
+          description: Bicycle store was successfully changed
+        404:
+          description: Does not exist
+  /bicycle_stores/{store_id}/delete:
+    delete:
+      tags: [ Bicycle_store ]
+      operationId: endpoint.bicycle_store_endpoints.delete_bicycle_store
+      summary: Delete Bicycle_store
+      parameters:
+        - $ref: '#/parameters/store_id'
+      responses:
+        200:
+          description: Bicycle store was successfully deleted
+        404:
+          description: Does not exist
+
+
+  #  /person/:
+  #    post:
+  #      tags: [ Person ]
+  #      operationId: app.person_add
+  #      parameters:
+  #        - $ref: '#/parameters/person_body'
+  #      responses:
+  #        200:
+  #          description: Return status
+  #        409:
+  #          description: Already exists
+  #  /person/{person_name}:
+  #    get:
+  #      tags: [ Person ]
+  #      operationId: app.person_find
+  #      parameters:
+  #        - $ref: '#/parameters/person_name'
+  #      responses:
+  #        200:
+  #          description: Return person object
+  #        404:
+  #          description: Person not found
   /parking_zones/all:
     get:
       tags: [ Parking zone ]
@@ -80,18 +175,27 @@ paths:
         404:
           description: NOT_FOUND
 parameters:
-  parking_zone_id:
-    name: parking_zone_id
-    description: The "id" of the parking zone object
+  test1_id:
+    name: test1_id
+    description: Test1 unique id
+    in: path
+    type: string
+    required: true
+    pattern: "^[a-zA-Z0-9-]+$"
+  store_id:
+    name: store_id
+    description: Store id
     in: path
     type: integer
     required: true
-  parking_zone_body:
-    name: parking_zone_body
-    description: The request body for creating/updating a parking zone object
+    pattern: "^[a-zA-Z0-9-]+$"
+  bicycle_store_body:
+    name: bicycle_store_body
+    description: bicycle_store_body
     in: body
     schema:
       required:
+        - name
         - street_name
         - street_number
         - city_name
@@ -100,6 +204,8 @@ parameters:
         - latitude
         - longitude
       properties:
+        name:
+          type: string
         street_name:
           type: string
         street_number:
@@ -114,3 +220,58 @@ parameters:
           type: number
         longitude:
           type: number
+
+
+  #  person_body:
+  #    name: person_body
+  #    description: Test1 unique id
+  #    in: body
+  #    schema:
+  #      required:
+  #        - name
+  #      properties:
+  #        name:
+  #          type: string
+  #        surname:
+  #          type: string
+  #
+  #  person_name:
+  #    name: person_name
+  #    description: The name of the person we're looking for
+  #    in: path
+  #    required: true
+  #    type: string
+  parking_zone_id:
+    name: parking_zone_id
+    description: The "id" parameter of the parking zone object
+    in: path
+    type: integer
+    required: true
+  parking_zone_body:
+    name: parking_zone_body
+      description: The request body for creating and updating a parking zone object
+      in: body
+      schema:
+        required:
+          - street_name
+          - street_number
+          - city_name
+          - city_postal_code
+          - country
+          - latitude
+          - longitude
+        properties:
+          street_name:
+            type: string
+          street_number:
+            type: integer
+          city_name:
+            type: string
+          city_postal_code:
+            type: integer
+          country:
+            type: string
+          latitude:
+            type: number
+          longitude:
+            type: number
