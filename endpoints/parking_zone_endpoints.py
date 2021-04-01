@@ -148,7 +148,7 @@ def edit_parking_zone(parking_zone_id, parking_zone_body):
             db.session.refresh(address)
             db.session.refresh(location)
 
-            response['message'] = 'The parking zone was successfully updated'
+            response['message'] = f'The parking zone with id {parking_zone_id} was successfully updated'
             response['parking_zone'] = parse_to_json(parking_zone)
 
             return response, 200
@@ -159,8 +159,8 @@ def edit_parking_zone(parking_zone_id, parking_zone_body):
 
 
 def delete_parking_zone(parking_zone_id):
-    parking_zone = db.session.query(ParkingZone).filter_by(id=parking_zone_id).first()
     response = {'message': None}
+    parking_zone = db.session.query(ParkingZone).filter_by(id=parking_zone_id).first()
 
     if parking_zone:
         db.session.delete(parking_zone)
