@@ -10,6 +10,7 @@ def parse_to_json(parking_zone):
         'city_name': parking_zone.address.city_name,
         'city_postal_code': parking_zone.address.city_postal_code,
         'country': parking_zone.address.country,
+        'capacity': parking_zone.capacity,
         'latitude': parking_zone.address.location.latitude,
         'longitude': parking_zone.address.location.longitude
     }
@@ -109,7 +110,8 @@ def add_parking_zone(parking_zone_body):
 
             return response, 409
         else:
-            parking_zone = ParkingZone(address=address)
+            capacity = parking_zone_body['capacity']
+            parking_zone = ParkingZone(address=address, capacity=capacity)
             db.session.add(parking_zone)
             db.session.commit()
             db.session.refresh(parking_zone)

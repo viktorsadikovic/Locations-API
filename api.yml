@@ -195,6 +195,7 @@ parameters:
         - city_name
         - city_postal_code
         - country
+        - capacity
         - latitude
         - longitude
       properties:
@@ -208,6 +209,8 @@ parameters:
           type: integer
         country:
           type: string
+        capacity:
+          type: integer
         latitude:
           type: number
         longitude:
