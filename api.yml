@@ -249,29 +249,29 @@ parameters:
     required: true
   parking_zone_body:
     name: parking_zone_body
-      description: The request body for creating and updating a parking zone object
-      in: body
-      schema:
-        required:
-          - street_name
-          - street_number
-          - city_name
-          - city_postal_code
-          - country
-          - latitude
-          - longitude
-        properties:
-          street_name:
-            type: string
-          street_number:
-            type: integer
-          city_name:
-            type: string
-          city_postal_code:
-            type: integer
-          country:
-            type: string
-          latitude:
-            type: number
-          longitude:
-            type: number
+    description: The request body for creating and updating a parking zone object
+    in: body
+    schema:
+      required:
+        - street_name
+        - street_number
+        - city_name
+        - city_postal_code
+        - country
+        - latitude
+        - longitude
+      properties:
+        street_name:
+          type: string
+        street_number:
+          type: integer
+        city_name:
+          type: string
+        city_postal_code:
+          type: integer
+        country:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
