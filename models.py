@@ -21,6 +21,7 @@ class ParkingSpot(db.Model):
 
 class ParkingZone(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    capacity = db.Column(db.Integer, nullable=False)
     address_id = db.Column(db.Integer, db.ForeignKey('address.id'), nullable=False)  # OneToOne
     parking_spots = db.relationship('ParkingSpot', backref='parking_zone')
 
