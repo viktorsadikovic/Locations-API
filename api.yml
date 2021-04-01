@@ -118,7 +118,7 @@ parameters:
     name: store_id
     description: Store id
     in: path
-    type: string
+    type: number
     required: true
     pattern: "^[a-zA-Z0-9-]+$"
   bicycle_store_body:
