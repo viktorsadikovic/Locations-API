@@ -10,66 +10,107 @@ produces:
   - application/json
 basePath: "/api/locations"
 paths:
-  /test1/{test1_id}:
+  /parking_zones/all:
     get:
-      tags: [ Test1 ]
-      operationId: app.get_test1
-      summary: Testing endpoint
-      parameters:
-        - $ref: '#/parameters/test1_id'
+      tags: [ Parking zone ]
+      operationId: endpoint.parking_zone_endpoints.get_all_parking_zones
+      summary: Endpoint for reading all registered parking zones
       responses:
         200:
-          description: Return test1
+          description: OK
+  /parking_zones/free_space:
+    get:
+      tags: [ Parking zone ]
+      operationId: endpoint.parking_zone_endpoints.get_parking_zones_with_free_space
+      summary: Endpoint for reading all registered parking zones with at least 1 available parking spot
+      responses:
+        200:
+          description: OK
+  /parking_zones/{parking_zone_id}:
+    get:
+      tags: [ Parking zone ]
+      operationId: endpoint.parking_zone_endpoints.get_single_parking_zone
+      summary: Endpoint for reading only 1 registered parking zone, defined by its "id"
+      parameters:
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
         404:
-          description: Does not exist
-#  /person/:
-#    post:
-#      tags: [ Person ]
-#      operationId: app.person_add
-#      parameters:
-#        - $ref: '#/parameters/person_body'
-#      responses:
-#        200:
-#          description: Return status
-#        409:
-#          description: Already exists
-#  /person/{person_name}:
-#    get:
-#      tags: [ Person ]
-#      operationId: app.person_find
-#      parameters:
-#        - $ref: '#/parameters/person_name'
-#      responses:
-#        200:
-#          description: Return person object
-#        404:
-#          description: Person not found
-
+          description: NOT_FOUND
+  /parking_zones/new:
+    post:
+      tags: [ Parking zone ]
+      operationId: endpoint.parking_zone_endpoints.add_parking_zone
+      summary: Endpoint for creating a new parking zone
+      parameters:
+        - $ref: '#/parameters/parking_zone_body'
+      responses:
+        200:
+          description: OK
+        400:
+          description: BAD_REQUEST
+        409:
+          description: ALREADY_EXISTS
+  /parking_zones/{parking_zone_id}/edit:
+    put:
+      tags: [ Parking zone ]
+      operationId: endpoint.parking_zone_endpoints.edit_parking_zone
+      summary: Endpoint for updating an existing parking zone
+      parameters:
+        - $ref: '#/parameters/parking_zone_id'
+        - $ref: '#/parameters/parking_zone_body'
+      responses:
+        200:
+          description: OK
+        400:
+          description: BAD_REQUEST
+        404:
+          description: NOT_FOUND
+  /parking_zones/{parking_zone_id}/delete:
+    delete:
+      tags: [ Parking zone ]
+      operationId: endpoint.parking_zone_endpoints.delete_parking_zone
+      summary: Endpoint for deleting an existing parking zone
+      parameters:
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
 parameters:
-  test1_id:
-    name: test1_id
-    description: Test1 unique id
+  parking_zone_id:
+    name: parking_zone_id
+    description: The "id" of the parking zone object
     in: path
-    type: string
+    type: integer
     required: true
-    pattern: "^[a-zA-Z0-9-]+$"
-
-#  person_body:
-#    name: person_body
-#    description: Test1 unique id
-#    in: body
-#    schema:
-#      required:
-#        - name
-#      properties:
-#        name:
-#          type: string
-#        surname:
-#          type: string
-#
-#  person_name:
-#    name: person_name
-#    description: The name of the person we're looking for
-#    in: path
-#    required: true
-#    type: string
+  parking_zone_body:
+    name: parking_zone_body
+    description: The request body for creating/updating a parking zone object
+    in: body
+    schema:
+      required:
+        - street_name
+        - street_number
+        - city_name
+        - city_postal_code
+        - country
+        - latitude
+        - longitude
+      properties:
+        street_name:
+          type: string
+        street_number:
+          type: integer
+        city_name:
+          type: string
+        city_postal_code:
+          type: integer
+        country:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
