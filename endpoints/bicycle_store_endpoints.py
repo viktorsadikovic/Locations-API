@@ -1,6 +1,6 @@
 from app import db
 from models import *
-import json
+from utilities import validate_request, update_address
 
 
 def parse_to_json(bicycle_store):
@@ -15,21 +15,6 @@ def parse_to_json(bicycle_store):
         'latitude': bicycle_store.address.location.latitude,
         'longitude': bicycle_store.address.location.longitude
     }
-
-
-def validate_request(request_body):
-    invalid_parameters = []
-
-    for key in request_body.keys():
-        value = request_body[key]
-
-        if value is None:
-            invalid_parameters.append(key)
-        else:
-            if ((type(value) is str) and not (value.strip())) or ((type(value) is int) and (value <= 0)):
-                invalid_parameters.append(key)
-
-    return tuple(invalid_parameters)
 
 
 def get_all_bicycle_stores():
@@ -84,13 +69,13 @@ def add_bicycle_store(bicycle_store_body):
             db.session.add(location)
             db.session.add(address)
             db.session.commit()
-            db.session.refresh(location)
             db.session.refresh(address)
+            db.session.refresh(location)
 
         name = bicycle_store_body['name']
 
         if address.bicycle_store:
-            response['message'] = "Bicycle Store Already Exists"
+            response['message'] = "A bicycle store is already registered on that address"
             response['bicycle_store'] = parse_to_json(address.bicycle_store)
 
             return response, 400
@@ -100,7 +85,7 @@ def add_bicycle_store(bicycle_store_body):
         db.session.commit()
         db.session.refresh(bicycle_store)
 
-        response['message'] = 'The parking zone was successfully added'
+        response['message'] = 'The bicycle store was successfully added'
         response['bicycle_store'] = parse_to_json(bicycle_store)
 
         return response, 200
@@ -119,16 +104,10 @@ def edit_bicycle_store(store_id, bicycle_store_body):
             return response, 400
         else:
             bicycle_store.name = bicycle_store_body['name']
-            bicycle_store.address.street_name = bicycle_store_body['street_name']
-            bicycle_store.address.street_number = bicycle_store_body['street_number']
-            bicycle_store.address.city_name = bicycle_store_body['city_name']
-            bicycle_store.address.city_postal_code = bicycle_store_body['city_postal_code']
-            bicycle_store.address.location.latitude = bicycle_store_body['latitude']
-            bicycle_store.address.location.longitude = bicycle_store_body['longitude']
-            bicycle_store.address.country = bicycle_store_body['country']
+            bicycle_store = update_address(model=bicycle_store, request_body=bicycle_store_body)
             db.session.commit()
 
-            response['message'] = f'The bicycle store with id {store_id} successfully updated'
+            response['message'] = f'The bicycle store with id {store_id} was successfully updated'
             response['bicycle_store'] = parse_to_json(bicycle_store)
 
             return response, 200

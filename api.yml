@@ -190,15 +190,17 @@ parameters:
     in: body
     schema:
       required:
+        - capacity
         - street_name
         - street_number
         - city_name
         - city_postal_code
         - country
-        - capacity
         - latitude
         - longitude
       properties:
+        capacity:
+          type: integer
         street_name:
           type: string
         street_number:
@@ -209,8 +211,6 @@ parameters:
           type: integer
         country:
           type: string
-        capacity:
-          type: integer
         latitude:
           type: number
         longitude:

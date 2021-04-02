@@ -1,34 +1,20 @@
 from app import db
 from models import ParkingZone, Address, Location
+from utilities import validate_request, update_address
 
 
 def parse_to_json(parking_zone):
     return {
         'id': parking_zone.id,
+        'capacity': parking_zone.capacity,
         'street_name': parking_zone.address.street_name,
         'street_number': parking_zone.address.street_number,
         'city_name': parking_zone.address.city_name,
         'city_postal_code': parking_zone.address.city_postal_code,
         'country': parking_zone.address.country,
-        'capacity': parking_zone.capacity,
         'latitude': parking_zone.address.location.latitude,
         'longitude': parking_zone.address.location.longitude
     }
-
-
-def validate_request(request_body):
-    invalid_parameters = []
-
-    for key in request_body.keys():
-        value = request_body[key]
-
-        if value is None:
-            invalid_parameters.append(key)
-        else:
-            if ((type(value) is str) and not (value.strip())) or ((type(value) is int) and (value <= 0)):
-                invalid_parameters.append(key)
-
-    return tuple(invalid_parameters)
 
 
 def get_all_parking_zones():
@@ -111,7 +97,7 @@ def add_parking_zone(parking_zone_body):
             return response, 409
         else:
             capacity = parking_zone_body['capacity']
-            parking_zone = ParkingZone(address=address, capacity=capacity)
+            parking_zone = ParkingZone(capacity=capacity, address=address)
             db.session.add(parking_zone)
             db.session.commit()
             db.session.refresh(parking_zone)
@@ -134,21 +120,19 @@ def edit_parking_zone(parking_zone_id, parking_zone_body):
 
             return response, 400
         else:
-            address = parking_zone.address
-            for attr in dir(address):
-                if (not attr.startswith('__')) and parking_zone_body[attr]:
-                    setattr(address, attr, parking_zone_body[attr])
+            # address = parking_zone.address
+            # for attr in dir(address):
+            #     if (not attr.startswith('__')) and parking_zone_body[attr]:
+            #         setattr(address, attr, parking_zone_body[attr])
+            #
+            # location = db.session.query(Location).filter_by(id=address.location_id).first()
+            # for attr in dir(location):
+            #     if (not attr.startswith('__')) and parking_zone_body[attr]:
+            #         setattr(location, attr, parking_zone_body[attr])
 
-            location = db.session.query(Location).filter_by(id=address.location_id).first()
-            for attr in dir(location):
-                if (not attr.startswith('__')) and parking_zone_body[attr]:
-                    setattr(location, attr, parking_zone_body[attr])
-
-            db.session.add(address)
-            db.session.add(location)
+            parking_zone.capacity = parking_zone_body['capacity']
+            parking_zone = update_address(model=parking_zone, request_body=parking_zone_body)
             db.session.commit()
-            db.session.refresh(address)
-            db.session.refresh(location)
 
             response['message'] = f'The parking zone with id {parking_zone_id} was successfully updated'
             response['parking_zone'] = parse_to_json(parking_zone)
