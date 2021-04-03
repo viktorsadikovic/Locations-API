@@ -48,16 +48,87 @@ def get_free_parking_spots_per_zone(parking_zone_id):
 
 
 def reserve_parking_spot(parking_zone_id, parking_spot_id):
-    ...
+    response = {'message': None, 'parking_spot': None}
+    parking_spot = db.session.query(ParkingSpot).filter_by(id=parking_spot_id, parking_zone_id=parking_zone_id).first()
+
+    if parking_spot:
+        parking_spot.available = False
+        db.session.commit()
+        db.session.refresh(parking_spot)
+
+        response['message'] = f'The parking spot with id {parking_spot_id} and ' \
+                              f'parking zone id {parking_zone_id} was successfully reserved'
+        response['parking_spot'] = parse_to_json(parking_spot)
+
+        return response, 200
+    else:
+        response['message'] = f'The parking spot with id {parking_spot_id} and ' \
+                              f'parking zone id {parking_zone_id} does not exist'
+
+        return response, 404
 
 
 def free_parking_spot(parking_zone_id, parking_spot_id):
-    ...
+    response = {'message': None, 'parking_spot': None}
+    parking_spot = db.session.query(ParkingSpot).filter_by(id=parking_spot_id, parking_zone_id=parking_zone_id).first()
+
+    if parking_spot:
+        parking_spot.available = True
+        db.session.commit()
+        db.session.refresh(parking_spot)
+
+        response['message'] = f'The parking spot with id {parking_spot_id} and ' \
+                              f'parking zone id {parking_zone_id} was successfully freed'
+        response['parking_spot'] = parse_to_json(parking_spot)
+
+        return response, 200
+    else:
+        response['message'] = f'The parking spot with id {parking_spot_id} and ' \
+                              f'parking zone id {parking_zone_id} does not exist'
+
+        return response, 404
 
 
 def add_parking_spot(parking_zone_id):
-    ...
+    response = {'message': None, 'parking_spot': None}
+    parking_zone = db.session.query(ParkingZone).filter_by(id=parking_zone_id).first()
+
+    if parking_zone:
+        if len(parking_zone.parking_spots) < parking_zone.capacity:
+            parking_spot = ParkingSpot(parking_zone=parking_zone, available=True)
+            db.session.add(parking_spot)
+            db.session.commit()
+            db.session.refresh(parking_spot)
+
+            response['message'] = f'The parking spot with id {parking_spot.id} and ' \
+                                  f'parking zone id {parking_zone_id} was successfully added'
+            response['parking_spot'] = parse_to_json(parking_spot)
+
+            return response, 200
+        else:
+            response['message'] = f'The parking zone with id {parking_zone_id} is out of capacity'
+
+            return response, 400
+    else:
+        response['message'] = f'The parking zone with id {parking_zone_id} does not exist'
+
+        return response, 404
 
 
 def delete_parking_spot(parking_zone_id, parking_spot_id):
-    ...
+    response = {'message': None}
+    parking_spot = db.session.query(ParkingSpot).filter_by(id=parking_spot_id, parking_zone_id=parking_zone_id).first()
+
+    if parking_spot:
+        db.session.delete(parking_spot)
+        db.session.commit()
+
+        response['message'] = f'The parking spot with id {parking_spot_id} and ' \
+                              f'parking zone id {parking_zone_id} was successfully deleted'
+
+        return response, 200
+    else:
+        response['message'] = f'The parking spot with id {parking_spot_id} and ' \
+                              f'parking zone id {parking_zone_id} does not exist'
+
+        return response, 404
