@@ -139,6 +139,79 @@ paths:
           description: OK
         404:
           description: NOT_FOUND
+  /parking_spots/free:
+    get:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.get_all_free_parking_spots
+      summary: Endpoint for reading all registered parking spots that are currently available
+      responses:
+        200:
+          description: OK
+  /parking_spots/free/{parking_zone_id}:
+    get:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.get_free_parking_spots_per_zone
+      summary: Endpoint for reading all registered parking spots that are currently available in the specified parking zone
+      parameters:
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /parking_spots/{parking_spot_id}/reserve/{parking_zone_id}:
+    put:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.reserve_parking_spot
+      summary: Endpoint for reserving 1 parking spot in the specified parking zone
+      parameters:
+        - $ref: '#/parameters/parking_spot_id'
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /parking_spots/{parking_spot_id}/free/{parking_zone_id}:
+    put:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.free_parking_spot
+      summary: Endpoint for freeing 1 parking spot in the specified parking zone
+      parameters:
+        - $ref: '#/parameters/parking_spot_id'
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /parking_spots/new/{parking_zone_id}:
+    post:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.add_parking_spot
+      summary: Endpoint for creating a new parking spot, in the specified parking zone
+      parameters:
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        400:
+          description: BAD_REQUEST
+        404:
+          description: NOT_FOUND
+  /parking_spots/{parking_spot_id}/delete/{parking_zone_id}:
+    delete:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.delete_parking_spot
+      summary: Endpoint for deleting an existing parking spot
+      parameters:
+        - $ref: '#/parameters/parking_spot_id'
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
 
 parameters:
   store_id:
@@ -215,3 +288,9 @@ parameters:
           type: number
         longitude:
           type: number
+  parking_spot_id:
+    name: parking_spot_id
+    description: The "id" parameter of the parking spot object
+    in: path
+    type: integer
+    required: true
