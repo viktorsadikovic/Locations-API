@@ -33,7 +33,7 @@ paths:
           description: Return Bicycle_store object
         404:
           description: Does not exist
-  /bicycle_stores/new/:
+  /bicycle_stores/new:
     post:
       tags: [ Bicycle store ]
       operationId: endpoints.bicycle_store_endpoints.add_bicycle_store
