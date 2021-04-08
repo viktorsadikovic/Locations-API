@@ -94,8 +94,10 @@ def add_parking_spot(parking_zone_id):
     parking_zone = db.session.query(ParkingZone).filter_by(id=parking_zone_id).first()
 
     if parking_zone:
-        if len(parking_zone.parking_spots) < parking_zone.capacity:
-            parking_spot = ParkingSpot(parking_zone=parking_zone, available=True)
+        num_parking_spots = len(parking_zone.parking_spots)
+
+        if num_parking_spots < parking_zone.capacity:
+            parking_spot = ParkingSpot(id=(num_parking_spots + 1), parking_zone=parking_zone, available=True)
             db.session.add(parking_spot)
             db.session.commit()
             db.session.refresh(parking_spot)
