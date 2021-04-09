@@ -15,7 +15,7 @@ paths:
     get:
       tags: [ Bicycle store ]
       operationId: endpoints.bicycle_store_endpoints.get_all_bicycle_stores
-      summary: Get all Bicycle_store objects
+      summary: Endpoint for reading all registered bicycle stores
       responses:
         200:
           description: Return list of Bicycle_store objects
@@ -25,7 +25,7 @@ paths:
     get:
       tags: [ Bicycle store ]
       operationId: endpoints.bicycle_store_endpoints.get_single_bicycle_store
-      summary: Get single Bicycle_store object
+      summary: Endpoint for reading only 1 bicycle store, defined by its "id"
       parameters:
         - $ref: '#/parameters/store_id'
       responses:
@@ -37,7 +37,7 @@ paths:
     post:
       tags: [ Bicycle store ]
       operationId: endpoints.bicycle_store_endpoints.add_bicycle_store
-      summary: Add new bicycle store
+      summary: Endpoint for creating a new bicycle store
       parameters:
         - $ref: '#/parameters/bicycle_store_body'
       responses:
@@ -49,7 +49,7 @@ paths:
     put:
       tags: [ Bicycle store ]
       operationId: endpoints.bicycle_store_endpoints.edit_bicycle_store
-      summary: Edit Bicycle_store
+      summary: Endpoint for updating an existing bicycle store
       parameters:
         - $ref: '#/parameters/store_id'
         - $ref: '#/parameters/bicycle_store_body'
@@ -60,9 +60,9 @@ paths:
           description: Does not exist
   /bicycle_stores/{store_id}/delete:
     delete:
-      tags: [ Bicycle_store ]
+      tags: [ Bicycle store ]
       operationId: endpoints.bicycle_store_endpoints.delete_bicycle_store
-      summary: Delete Bicycle_store
+      summary: Endpoint for deleting an existing bicycle store
       parameters:
         - $ref: '#/parameters/store_id'
       responses:
