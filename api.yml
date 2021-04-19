@@ -212,6 +212,65 @@ paths:
           description: OK
         404:
           description: NOT_FOUND
+  /repair_stations/all:
+    get:
+      tags: [ Repair station ]
+      operationId: endpoints.repair_station_endpoints.get_all_repair_stations
+      summary: Endpoint for reading all registered repair stations
+      responses:
+        200:
+          description: Return list of Repair_store objects
+        404:
+          description: Does not exist
+  /repair_stations/{repair_station_id}:
+    get:
+      tags: [ Repair station ]
+      operationId: endpoints.repair_station_endpoints.get_single_repair_station
+      summary: Endpoint for reading only 1 repair station, defined by its "id"
+      parameters:
+        - $ref: '#/parameters/repair_station_id'
+      responses:
+        200:
+          description: Return Repair station object
+        404:
+          description: Does not exist
+  /repair_stations/new:
+    post:
+      tags: [ Repair station ]
+      operationId: endpoints.repair_station_endpoints.add_repair_station
+      summary: Endpoint for creating a new repair station
+      parameters:
+        - $ref: '#/parameters/repair_station_body'
+      responses:
+        200:
+          description: Return status
+        409:
+          description: Already exists
+  /repair_stations/{repair_station_id}/edit:
+    put:
+      tags: [ Repair station ]
+      operationId: endpoints.repair_station_endpoints.edit_repair_station
+      summary: Endpoint for updating an existing repair station
+      parameters:
+        - $ref: '#/parameters/repair_station_id'
+        - $ref: '#/parameters/repair_station_body'
+      responses:
+        200:
+          description: Repair station was successfully updated
+        404:
+          description: Does not exist
+  /repair_stations/{repair_station_id}/delete:
+    delete:
+      tags: [ Repair station ]
+      operationId: endpoints.repair_station_endpoints.delete_repair_station
+      summary: Endpoint for deleting an existing repair station
+      parameters:
+        - $ref: '#/parameters/repair_station_id'
+      responses:
+        200:
+          description: Repair station was successfully deleted
+        404:
+          description: Does not exist
 
 parameters:
   store_id:
@@ -294,3 +353,40 @@ parameters:
     in: path
     type: integer
     required: true
+  repair_station_id:
+    name: repair_station_id
+    description: The "id" parameter of the parking spot object
+    in: path
+    type: integer
+    required: true
+  repair_station_body:
+    name: repair_station_body
+    description: The request body for creating and updating a repair station object
+    in: body
+    schema:
+      required:
+        - availability
+        - street_name
+        - street_number
+        - city_name
+        - city_postal_code
+        - country
+        - latitude
+        - longitude
+      properties:
+        availability:
+          type: boolean
+        street_name:
+          type: string
+        street_number:
+          type: integer
+        city_name:
+          type: string
+        city_postal_code:
+          type: integer
+        country:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
