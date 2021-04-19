@@ -1,20 +1,9 @@
 from app import db
 from models import *
+from marshmallow_schemas import BicycleStoreSchema
 from utilities import validate_request, update_address
 
-
-def parse_to_json(bicycle_store):
-    return {
-        'id': bicycle_store.id,
-        'name': bicycle_store.name,
-        'street_name': bicycle_store.address.street_name,
-        'street_number': bicycle_store.address.street_number,
-        'city_name': bicycle_store.address.city_name,
-        'city_postal_code': bicycle_store.address.city_postal_code,
-        'country': bicycle_store.address.country,
-        'latitude': bicycle_store.address.location.latitude,
-        'longitude': bicycle_store.address.location.longitude
-    }
+bicycle_store_schema = BicycleStoreSchema()
 
 
 def get_all_bicycle_stores():
@@ -22,7 +11,7 @@ def get_all_bicycle_stores():
     bicycle_stores = db.session.query(BicycleStore).all()
 
     response['message'] = "The bicycle stores were successfully found"
-    response['bicycle_stores'] = [parse_to_json(store) for store in bicycle_stores]
+    response['bicycle_stores'] = [bicycle_store_schema.dump(store) for store in bicycle_stores]
 
     return response, 200
 
@@ -33,7 +22,7 @@ def get_single_bicycle_store(store_id):
 
     if bicycle_store:
         response['message'] = f'The bicycle store with id {store_id} was successfully found'
-        response['bicycle_store'] = parse_to_json(bicycle_store)
+        response['bicycle_store'] = bicycle_store_schema.dump(bicycle_store)
 
         return response, 200
     else:
@@ -77,7 +66,7 @@ def add_bicycle_store(bicycle_store_body):
 
         if address.bicycle_store:
             response['message'] = "A bicycle store is already registered on that address"
-            response['bicycle_store'] = parse_to_json(address.bicycle_store)
+            response['bicycle_store'] = bicycle_store_schema.dump(address.bicycle_store)
 
             return response, 409
 
@@ -87,7 +76,7 @@ def add_bicycle_store(bicycle_store_body):
         db.session.refresh(bicycle_store)
 
         response['message'] = 'The bicycle store was successfully added'
-        response['bicycle_store'] = parse_to_json(bicycle_store)
+        response['bicycle_store'] = bicycle_store_schema.dump(bicycle_store)
 
         return response, 200
 
@@ -109,7 +98,7 @@ def edit_bicycle_store(store_id, bicycle_store_body):
             db.session.commit()
 
             response['message'] = f'The bicycle store with id {store_id} was successfully updated'
-            response['bicycle_store'] = parse_to_json(bicycle_store)
+            response['bicycle_store'] = bicycle_store_schema.dump(bicycle_store)
 
             return response, 200
     else:
