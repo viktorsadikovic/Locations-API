@@ -1,25 +1,12 @@
 from app import db
 from models import ParkingZone, Address, Location
 from marshmallow_schemas import ParkingZoneSchema
-from utilities import validate_request, update_address
+from utilities import validate_request, update_address, has_role
 
 parking_zone_schema = ParkingZoneSchema()
 
 
-# def parse_to_json(parking_zone):
-#     return {
-#         'id': parking_zone.id,
-#         'capacity': parking_zone.capacity,
-#         'street_name': parking_zone.address.street_name,
-#         'street_number': parking_zone.address.street_number,
-#         'city_name': parking_zone.address.city_name,
-#         'city_postal_code': parking_zone.address.city_postal_code,
-#         'country': parking_zone.address.country,
-#         'latitude': parking_zone.address.location.latitude,
-#         'longitude': parking_zone.address.location.longitude
-#     }
-
-
+@has_role(['locations_admin', 'reserve'])
 def get_all_parking_zones():
     response = {'message': None, 'parking_zones': None}
     parking_zones = db.session.query(ParkingZone).all()
@@ -30,6 +17,7 @@ def get_all_parking_zones():
     return response, 200
 
 
+@has_role(['locations_admin', 'reserve'])
 def get_parking_zones_with_free_space():
     response = {'message': None, 'parking_zones': None}
     all_parking_zones = db.session.query(ParkingZone).all()
@@ -47,6 +35,7 @@ def get_parking_zones_with_free_space():
     return response, 200
 
 
+@has_role(['locations_admin', 'reserve'])
 def get_single_parking_zone(parking_zone_id):
     response = {'message': None, 'parking_zone': None}
     parking_zone = db.session.query(ParkingZone).filter_by(id=parking_zone_id).first()
@@ -62,6 +51,7 @@ def get_single_parking_zone(parking_zone_id):
         return response, 404
 
 
+@has_role(['locations_admin'])
 def add_parking_zone(parking_zone_body):
     response = {'message': None, 'parking_zone': None}
     invalid_parameters = validate_request(parking_zone_body)
@@ -111,6 +101,7 @@ def add_parking_zone(parking_zone_body):
             return response, 200
 
 
+@has_role(['locations_admin'])
 def edit_parking_zone(parking_zone_id, parking_zone_body):
     response = {'message': None, 'parking_zone': None}
     parking_zone = db.session.query(ParkingZone).filter_by(id=parking_zone_id).first()
@@ -123,16 +114,6 @@ def edit_parking_zone(parking_zone_id, parking_zone_body):
 
             return response, 400
         else:
-            # address = parking_zone.address
-            # for attr in dir(address):
-            #     if (not attr.startswith('__')) and parking_zone_body[attr]:
-            #         setattr(address, attr, parking_zone_body[attr])
-            #
-            # location = db.session.query(Location).filter_by(id=address.location_id).first()
-            # for attr in dir(location):
-            #     if (not attr.startswith('__')) and parking_zone_body[attr]:
-            #         setattr(location, attr, parking_zone_body[attr])
-
             parking_zone.capacity = parking_zone_body['capacity']
             parking_zone = update_address(model=parking_zone, request_body=parking_zone_body)
             db.session.commit()
@@ -147,6 +128,7 @@ def edit_parking_zone(parking_zone_id, parking_zone_body):
         return response, 404
 
 
+@has_role(['locations_admin'])
 def delete_parking_zone(parking_zone_id):
     response = {'message': None}
     parking_zone = db.session.query(ParkingZone).filter_by(id=parking_zone_id).first()

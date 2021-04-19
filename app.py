@@ -2,6 +2,8 @@ import connexion
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+JWT_SECRET = 'MY JWT SECRET'
+
 connexion_app = connexion.App(__name__, specification_dir="./")
 app = connexion_app.app
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'

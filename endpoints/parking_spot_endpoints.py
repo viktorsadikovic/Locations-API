@@ -1,28 +1,12 @@
 from app import db
 from models import ParkingSpot, ParkingZone
 from marshmallow_schemas import ParkingSpotSchema
+from utilities import has_role
 
 parking_spot_schema = ParkingSpotSchema()
 
 
-# def parse_to_json(parking_spot):
-#     return {
-#         'id': parking_spot.id,
-#         'parking_zone': {
-#             'id': parking_spot.parking_zone.id,
-#             'capacity': parking_spot.parking_zone.capacity,
-#             'street_name': parking_spot.parking_zone.address.street_name,
-#             'street_number': parking_spot.parking_zone.address.street_number,
-#             'city_name': parking_spot.parking_zone.address.city_name,
-#             'city_postal_code': parking_spot.parking_zone.address.city_postal_code,
-#             'country': parking_spot.parking_zone.address.country,
-#             'latitude': parking_spot.parking_zone.address.location.latitude,
-#             'longitude': parking_spot.parking_zone.address.location.longitude
-#         },
-#         'available': parking_spot.available
-#     }
-
-
+@has_role(['locations_admin', 'reserve'])
 def get_all_free_parking_spots():
     response = {'message': None, 'parking_spots': None}
     free_parking_spots = db.session.query(ParkingSpot).filter_by(available=True).all()
@@ -33,6 +17,7 @@ def get_all_free_parking_spots():
     return response, 200
 
 
+@has_role(['locations_admin', 'reserve'])
 def get_free_parking_spots_per_zone(parking_zone_id):
     response = {'message': None, 'parking_spots': None}
     parking_zone = db.session.query(ParkingZone).filter_by(id=parking_zone_id).first()
@@ -50,6 +35,7 @@ def get_free_parking_spots_per_zone(parking_zone_id):
         return response, 404
 
 
+@has_role(['locations_admin', 'reserve'])
 def reserve_parking_spot(parking_zone_id, parking_spot_id):
     response = {'message': None, 'parking_spot': None}
     parking_spot = db.session.query(ParkingSpot).filter_by(id=parking_spot_id, parking_zone_id=parking_zone_id).first()
@@ -71,6 +57,7 @@ def reserve_parking_spot(parking_zone_id, parking_spot_id):
         return response, 404
 
 
+@has_role(['locations_admin', 'reserve'])
 def free_parking_spot(parking_zone_id, parking_spot_id):
     response = {'message': None, 'parking_spot': None}
     parking_spot = db.session.query(ParkingSpot).filter_by(id=parking_spot_id, parking_zone_id=parking_zone_id).first()
@@ -92,6 +79,7 @@ def free_parking_spot(parking_zone_id, parking_spot_id):
         return response, 404
 
 
+@has_role(['locations_admin'])
 def add_parking_spot(parking_zone_id):
     response = {'message': None, 'parking_spot': None}
     parking_zone = db.session.query(ParkingZone).filter_by(id=parking_zone_id).first()
@@ -120,6 +108,7 @@ def add_parking_spot(parking_zone_id):
         return response, 404
 
 
+@has_role(['locations_admin'])
 def delete_parking_spot(parking_zone_id, parking_spot_id):
     response = {'message': None}
     parking_spot = db.session.query(ParkingSpot).filter_by(id=parking_spot_id, parking_zone_id=parking_zone_id).first()

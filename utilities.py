@@ -1,3 +1,9 @@
+import jwt
+from functools import wraps
+from flask import request, abort
+from app import JWT_SECRET
+
+
 def validate_request(request_body):
     invalid_parameters = []
 
@@ -23,3 +29,29 @@ def update_address(model, request_body):
     model.address.location.longitude = request_body['longitude']
 
     return model
+
+
+def has_role(arg):
+    def has_role_inner(fn):
+        @wraps(fn)
+        def decorated_view(*args, **kwargs):
+            try:
+                headers = request.headers
+                if 'AUTHORIZATION' in headers:
+                    token = headers['AUTHORIZATION'].split(' ')[1]
+                    decoded_token = decode_token(token)
+                    for role in arg:
+                        if role in decoded_token['roles']:
+                            return fn(*args, **kwargs)
+                    abort(401)
+                return fn(*args, **kwargs)
+            except Exception as e:
+                abort(401)
+
+        return decorated_view
+
+    return has_role_inner
+
+
+def decode_token(token):
+    return jwt.decode(token, JWT_SECRET, algorithms=['HS256'])

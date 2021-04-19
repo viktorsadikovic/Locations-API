@@ -1,11 +1,12 @@
 from app import db
 from models import *
 from marshmallow_schemas import BicycleStoreSchema
-from utilities import validate_request, update_address
+from utilities import validate_request, update_address, has_role
 
 bicycle_store_schema = BicycleStoreSchema()
 
 
+@has_role(['locations_admin', 'shipping'])
 def get_all_bicycle_stores():
     response = {'message': None, 'bicycle_stores': None}
     bicycle_stores = db.session.query(BicycleStore).all()
@@ -16,6 +17,7 @@ def get_all_bicycle_stores():
     return response, 200
 
 
+@has_role(['locations_admin', 'shipping'])
 def get_single_bicycle_store(store_id):
     response = {'message': None, 'bicycle_store': None}
     bicycle_store = db.session.query(BicycleStore).filter_by(id=store_id).first()
@@ -31,6 +33,7 @@ def get_single_bicycle_store(store_id):
         return response, 400
 
 
+@has_role(['locations_admin'])
 def add_bicycle_store(bicycle_store_body):
     response = {'message': None, 'bicycle_store': None}
     invalid_parameters = validate_request(bicycle_store_body)
@@ -81,6 +84,7 @@ def add_bicycle_store(bicycle_store_body):
         return response, 200
 
 
+@has_role(['locations_admin'])
 def edit_bicycle_store(store_id, bicycle_store_body):
     response = {'message': None, 'bicycle_store': None}
     bicycle_store = db.session.query(BicycleStore).filter_by(id=store_id).first()
@@ -107,6 +111,7 @@ def edit_bicycle_store(store_id, bicycle_store_body):
         return response, 400
 
 
+@has_role(['locations_admin'])
 def delete_bicycle_store(store_id):
     response = {'message': None}
     bicycle_store = db.session.query(BicycleStore).filter_by(id=store_id).first()
