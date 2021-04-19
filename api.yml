@@ -219,9 +219,9 @@ paths:
       summary: Endpoint for reading all registered repair stations
       responses:
         200:
-          description: Return list of Repair_store objects
+          description: OK
         404:
-          description: Does not exist
+          description: NOT_FOUND
   /repair_stations/{repair_station_id}:
     get:
       tags: [ Repair station ]
@@ -231,9 +231,9 @@ paths:
         - $ref: '#/parameters/repair_station_id'
       responses:
         200:
-          description: Return Repair station object
+          description: OK
         404:
-          description: Does not exist
+          description: NOT_FOUND
   /repair_stations/new:
     post:
       tags: [ Repair station ]
@@ -243,9 +243,9 @@ paths:
         - $ref: '#/parameters/repair_station_body'
       responses:
         200:
-          description: Return status
+          description: OK
         409:
-          description: Already exists
+          description: ALREADY_EXISTS
   /repair_stations/{repair_station_id}/edit:
     put:
       tags: [ Repair station ]
@@ -256,9 +256,9 @@ paths:
         - $ref: '#/parameters/repair_station_body'
       responses:
         200:
-          description: Repair station was successfully updated
+          description: OK
         404:
-          description: Does not exist
+          description: NOT_FOUND
   /repair_stations/{repair_station_id}/delete:
     delete:
       tags: [ Repair station ]
@@ -268,9 +268,9 @@ paths:
         - $ref: '#/parameters/repair_station_id'
       responses:
         200:
-          description: Repair station was successfully deleted
+          description: OK
         404:
-          description: Does not exist
+          description: NOT_FOUND
 
 parameters:
   store_id:
@@ -355,7 +355,7 @@ parameters:
     required: true
   repair_station_id:
     name: repair_station_id
-    description: The "id" parameter of the parking spot object
+    description: The "id" parameter of the repair station object
     in: path
     type: integer
     required: true
@@ -365,7 +365,7 @@ parameters:
     in: body
     schema:
       required:
-        - availability
+        - available
         - street_name
         - street_number
         - city_name
@@ -374,7 +374,7 @@ parameters:
         - latitude
         - longitude
       properties:
-        availability:
+        available:
           type: boolean
         street_name:
           type: string

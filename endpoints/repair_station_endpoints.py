@@ -30,12 +30,9 @@ def get_all_repair_stations():
 def get_available_repair_stations():
     response = {'message': None, 'repair_stations': None}
     all_repair_stations = db.session.query(RepairStation).all()
-    available_repair_stations = []
-    for repair_station in all_repair_stations:
-        available_repair_stations = [repair_station for repair_station in all_repair_stations if
-                                     repair_station.available]
+    available_repair_stations = [repair_station for repair_station in all_repair_stations if repair_station.available]
 
-    response['message'] = 'The avalilable repair stations were successfully found'
+    response['message'] = 'The available repair stations were successfully found'
     response['repair_stations'] = [parse_to_json(repair_station) for repair_station in available_repair_stations]
 
     return response, 200
@@ -48,10 +45,13 @@ def get_single_repair_station(repair_station_id):
     if repair_station:
         response['message'] = f'The repair station with id {repair_station_id} was successfully found'
         response['repair_station'] = parse_to_json(repair_station)
+
         return response, 200
     else:
         response['message'] = f'The repair station with id {repair_station_id} does not exist'
+
         return response, 404
+
 
 def add_repair_station(repair_station_body):
     response = {'message': None, 'repair_station': None}
@@ -85,13 +85,13 @@ def add_repair_station(repair_station_body):
             db.session.refresh(location)
 
         if address.repair_station:
-            response['message'] = "A repair station is already registered on that address"
+            response['message'] = 'A repair station is already registered on that address'
             response['repair_station'] = parse_to_json(address.repair_station)
 
             return response, 409
         else:
-            capacity = repair_station_body['capacity']
-            repair_station = RepairStation(capacity=capacity, address=address)
+            available = repair_station_body['available']
+            repair_station = RepairStation(available=available, address=address)
             db.session.add(repair_station)
             db.session.commit()
             db.session.refresh(repair_station)
@@ -100,6 +100,7 @@ def add_repair_station(repair_station_body):
             response['repair_station'] = parse_to_json(repair_station)
 
             return response, 200
+
 
 def edit_repair_station(repair_station_id, repair_station_body):
     response = {'message': None, 'repair_station': None}
@@ -113,8 +114,7 @@ def edit_repair_station(repair_station_id, repair_station_body):
 
             return response, 400
         else:
-
-            repair_station.availability = repair_station_body['availability']
+            repair_station.available = repair_station_body['available']
             repair_station = update_address(model=repair_station, request_body=repair_station_body)
             db.session.commit()
 
@@ -126,7 +126,6 @@ def edit_repair_station(repair_station_id, repair_station_body):
         response['message'] = f'The repair station with id {repair_station_id} does not exist'
 
         return response, 404
-
 
 
 def delete_repair_station(repair_station_id):
