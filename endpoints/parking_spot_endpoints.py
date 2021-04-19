@@ -1,23 +1,26 @@
 from app import db
 from models import ParkingSpot, ParkingZone
+from marshmallow_schemas import ParkingSpotSchema
+
+parking_spot_schema = ParkingSpotSchema()
 
 
-def parse_to_json(parking_spot):
-    return {
-        'id': parking_spot.id,
-        'parking_zone': {
-            'id': parking_spot.parking_zone.id,
-            'capacity': parking_spot.parking_zone.capacity,
-            'street_name': parking_spot.parking_zone.address.street_name,
-            'street_number': parking_spot.parking_zone.address.street_number,
-            'city_name': parking_spot.parking_zone.address.city_name,
-            'city_postal_code': parking_spot.parking_zone.address.city_postal_code,
-            'country': parking_spot.parking_zone.address.country,
-            'latitude': parking_spot.parking_zone.address.location.latitude,
-            'longitude': parking_spot.parking_zone.address.location.longitude
-        },
-        'available': parking_spot.available
-    }
+# def parse_to_json(parking_spot):
+#     return {
+#         'id': parking_spot.id,
+#         'parking_zone': {
+#             'id': parking_spot.parking_zone.id,
+#             'capacity': parking_spot.parking_zone.capacity,
+#             'street_name': parking_spot.parking_zone.address.street_name,
+#             'street_number': parking_spot.parking_zone.address.street_number,
+#             'city_name': parking_spot.parking_zone.address.city_name,
+#             'city_postal_code': parking_spot.parking_zone.address.city_postal_code,
+#             'country': parking_spot.parking_zone.address.country,
+#             'latitude': parking_spot.parking_zone.address.location.latitude,
+#             'longitude': parking_spot.parking_zone.address.location.longitude
+#         },
+#         'available': parking_spot.available
+#     }
 
 
 def get_all_free_parking_spots():
@@ -25,7 +28,7 @@ def get_all_free_parking_spots():
     free_parking_spots = db.session.query(ParkingSpot).filter_by(available=True).all()
 
     response['message'] = 'The parking spots were successfully found'
-    response['parking_spots'] = [parse_to_json(parking_spot) for parking_spot in free_parking_spots]
+    response['parking_spots'] = [parking_spot_schema.dump(parking_spot) for parking_spot in free_parking_spots]
 
     return response, 200
 
@@ -38,7 +41,7 @@ def get_free_parking_spots_per_zone(parking_zone_id):
         free_parking_spots = [parking_spot for parking_spot in parking_zone.parking_spots if parking_spot.available]
 
         response['message'] = 'The parking spots were successfully found'
-        response['parking_spots'] = [parse_to_json(parking_spot) for parking_spot in free_parking_spots]
+        response['parking_spots'] = [parking_spot_schema.dump(parking_spot) for parking_spot in free_parking_spots]
 
         return response, 200
     else:
@@ -58,7 +61,7 @@ def reserve_parking_spot(parking_zone_id, parking_spot_id):
 
         response['message'] = f'The parking spot with id {parking_spot_id} and ' \
                               f'parking zone id {parking_zone_id} was successfully reserved'
-        response['parking_spot'] = parse_to_json(parking_spot)
+        response['parking_spot'] = parking_spot_schema.dump(parking_spot)
 
         return response, 200
     else:
@@ -79,7 +82,7 @@ def free_parking_spot(parking_zone_id, parking_spot_id):
 
         response['message'] = f'The parking spot with id {parking_spot_id} and ' \
                               f'parking zone id {parking_zone_id} was successfully freed'
-        response['parking_spot'] = parse_to_json(parking_spot)
+        response['parking_spot'] = parking_spot_schema.dump(parking_spot)
 
         return response, 200
     else:
@@ -104,7 +107,7 @@ def add_parking_spot(parking_zone_id):
 
             response['message'] = f'The parking spot with id {parking_spot.id} and ' \
                                   f'parking zone id {parking_zone_id} was successfully added'
-            response['parking_spot'] = parse_to_json(parking_spot)
+            response['parking_spot'] = parking_spot_schema.dump(parking_spot)
 
             return response, 200
         else:

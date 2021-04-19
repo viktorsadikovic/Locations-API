@@ -1,20 +1,23 @@
 from app import db
 from models import ParkingZone, Address, Location
+from marshmallow_schemas import ParkingZoneSchema
 from utilities import validate_request, update_address
 
+parking_zone_schema = ParkingZoneSchema()
 
-def parse_to_json(parking_zone):
-    return {
-        'id': parking_zone.id,
-        'capacity': parking_zone.capacity,
-        'street_name': parking_zone.address.street_name,
-        'street_number': parking_zone.address.street_number,
-        'city_name': parking_zone.address.city_name,
-        'city_postal_code': parking_zone.address.city_postal_code,
-        'country': parking_zone.address.country,
-        'latitude': parking_zone.address.location.latitude,
-        'longitude': parking_zone.address.location.longitude
-    }
+
+# def parse_to_json(parking_zone):
+#     return {
+#         'id': parking_zone.id,
+#         'capacity': parking_zone.capacity,
+#         'street_name': parking_zone.address.street_name,
+#         'street_number': parking_zone.address.street_number,
+#         'city_name': parking_zone.address.city_name,
+#         'city_postal_code': parking_zone.address.city_postal_code,
+#         'country': parking_zone.address.country,
+#         'latitude': parking_zone.address.location.latitude,
+#         'longitude': parking_zone.address.location.longitude
+#     }
 
 
 def get_all_parking_zones():
@@ -22,7 +25,7 @@ def get_all_parking_zones():
     parking_zones = db.session.query(ParkingZone).all()
 
     response['message'] = 'The parking zones were successfully found'
-    response['parking_zones'] = [parse_to_json(parking_zone) for parking_zone in parking_zones]
+    response['parking_zones'] = [parking_zone_schema.dump(parking_zone) for parking_zone in parking_zones]
 
     return response, 200
 
@@ -39,7 +42,7 @@ def get_parking_zones_with_free_space():
             free_parking_zones.append(parking_zone)
 
     response['message'] = 'The parking zones were successfully found'
-    response['parking_zones'] = [parse_to_json(parking_zone) for parking_zone in free_parking_zones]
+    response['parking_zones'] = [parking_zone_schema.dump(parking_zone) for parking_zone in free_parking_zones]
 
     return response, 200
 
@@ -50,7 +53,7 @@ def get_single_parking_zone(parking_zone_id):
 
     if parking_zone:
         response['message'] = f'The parking zone with id {parking_zone_id} was successfully found'
-        response['parking_zone'] = parse_to_json(parking_zone)
+        response['parking_zone'] = parking_zone_schema.dump(parking_zone)
 
         return response, 200
     else:
@@ -92,7 +95,7 @@ def add_parking_zone(parking_zone_body):
 
         if address.parking_zone:
             response['message'] = "A parking zone is already registered on that address"
-            response['parking_zone'] = parse_to_json(address.parking_zone)
+            response['parking_zone'] = parking_zone_schema.dump(address.parking_zone)
 
             return response, 409
         else:
@@ -103,7 +106,7 @@ def add_parking_zone(parking_zone_body):
             db.session.refresh(parking_zone)
 
             response['message'] = 'The parking zone was successfully added'
-            response['parking_zone'] = parse_to_json(parking_zone)
+            response['parking_zone'] = parking_zone_schema.dump(parking_zone)
 
             return response, 200
 
@@ -135,7 +138,7 @@ def edit_parking_zone(parking_zone_id, parking_zone_body):
             db.session.commit()
 
             response['message'] = f'The parking zone with id {parking_zone_id} was successfully updated'
-            response['parking_zone'] = parse_to_json(parking_zone)
+            response['parking_zone'] = parking_zone_schema.dump(parking_zone)
 
             return response, 200
     else:

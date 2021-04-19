@@ -1,20 +1,23 @@
 from app import db
 from models import RepairStation, Address, Location
+from marshmallow_schemas import RepairStationSchema
 from utilities import validate_request, update_address
 
+repair_station_schema = RepairStationSchema()
 
-def parse_to_json(repair_station):
-    return {
-        'id': repair_station.id,
-        'available': repair_station.available,
-        'street_name': repair_station.address.street_name,
-        'street_number': repair_station.address.street_number,
-        'city_name': repair_station.address.city_name,
-        'city_postal_code': repair_station.address.city_postal_code,
-        'country': repair_station.address.country,
-        'latitude': repair_station.address.location.latitude,
-        'longitude': repair_station.address.location.longitude
-    }
+
+# def parse_to_json(repair_station):
+#     return {
+#         'id': repair_station.id,
+#         'available': repair_station.available,
+#         'street_name': repair_station.address.street_name,
+#         'street_number': repair_station.address.street_number,
+#         'city_name': repair_station.address.city_name,
+#         'city_postal_code': repair_station.address.city_postal_code,
+#         'country': repair_station.address.country,
+#         'latitude': repair_station.address.location.latitude,
+#         'longitude': repair_station.address.location.longitude
+#     }
 
 
 def get_all_repair_stations():
@@ -22,7 +25,7 @@ def get_all_repair_stations():
     repair_stations = db.session.query(RepairStation).all()
 
     response['message'] = 'The repair stations were successfully found'
-    response['repair_stations'] = [parse_to_json(repair_station) for repair_station in repair_stations]
+    response['repair_stations'] = [repair_station_schema.dump(repair_station) for repair_station in repair_stations]
 
     return response, 200
 
@@ -33,7 +36,8 @@ def get_available_repair_stations():
     available_repair_stations = [repair_station for repair_station in all_repair_stations if repair_station.available]
 
     response['message'] = 'The available repair stations were successfully found'
-    response['repair_stations'] = [parse_to_json(repair_station) for repair_station in available_repair_stations]
+    response['repair_stations'] = [repair_station_schema.dump(repair_station) for repair_station in
+                                   available_repair_stations]
 
     return response, 200
 
@@ -44,7 +48,7 @@ def get_single_repair_station(repair_station_id):
 
     if repair_station:
         response['message'] = f'The repair station with id {repair_station_id} was successfully found'
-        response['repair_station'] = parse_to_json(repair_station)
+        response['repair_station'] = repair_station_schema.dump(repair_station)
 
         return response, 200
     else:
@@ -86,7 +90,7 @@ def add_repair_station(repair_station_body):
 
         if address.repair_station:
             response['message'] = 'A repair station is already registered on that address'
-            response['repair_station'] = parse_to_json(address.repair_station)
+            response['repair_station'] = repair_station_schema.dump(address.repair_station)
 
             return response, 409
         else:
@@ -97,7 +101,7 @@ def add_repair_station(repair_station_body):
             db.session.refresh(repair_station)
 
             response['message'] = 'The repair station was successfully added'
-            response['repair_station'] = parse_to_json(repair_station)
+            response['repair_station'] = repair_station_schema.dump(repair_station)
 
             return response, 200
 
@@ -119,7 +123,7 @@ def edit_repair_station(repair_station_id, repair_station_body):
             db.session.commit()
 
             response['message'] = f'The repair station with id {repair_station_id} was successfully updated'
-            response['repair_station'] = parse_to_json(repair_station)
+            response['repair_station'] = repair_station_schema.dump(repair_station)
 
             return response, 200
     else:
