@@ -66,6 +66,7 @@ def add_bicycle_store(bicycle_store_body):
 
             latitude, longitude = bicycle_store_body['latitude'], bicycle_store_body['longitude']
             location = Location(latitude=latitude, longitude=longitude, address=address)
+
             db.session.add(location)
             db.session.add(address)
             db.session.commit()
@@ -78,7 +79,7 @@ def add_bicycle_store(bicycle_store_body):
             response['message'] = "A bicycle store is already registered on that address"
             response['bicycle_store'] = parse_to_json(address.bicycle_store)
 
-            return response, 400
+            return response, 409
 
         bicycle_store = BicycleStore(name=name, address=address)
         db.session.add(bicycle_store)
