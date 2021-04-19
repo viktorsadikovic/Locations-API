@@ -1,25 +1,12 @@
 from app import db
 from models import RepairStation, Address, Location
 from marshmallow_schemas import RepairStationSchema
-from utilities import validate_request, update_address
+from utilities import validate_request, update_address, has_role
 
 repair_station_schema = RepairStationSchema()
 
 
-# def parse_to_json(repair_station):
-#     return {
-#         'id': repair_station.id,
-#         'available': repair_station.available,
-#         'street_name': repair_station.address.street_name,
-#         'street_number': repair_station.address.street_number,
-#         'city_name': repair_station.address.city_name,
-#         'city_postal_code': repair_station.address.city_postal_code,
-#         'country': repair_station.address.country,
-#         'latitude': repair_station.address.location.latitude,
-#         'longitude': repair_station.address.location.longitude
-#     }
-
-
+@has_role(['locations_admin', 'reserve'])
 def get_all_repair_stations():
     response = {'message': None, 'repair_stations': None}
     repair_stations = db.session.query(RepairStation).all()
@@ -30,6 +17,7 @@ def get_all_repair_stations():
     return response, 200
 
 
+@has_role(['locations_admin', 'reserve'])
 def get_available_repair_stations():
     response = {'message': None, 'repair_stations': None}
     all_repair_stations = db.session.query(RepairStation).all()
@@ -42,6 +30,7 @@ def get_available_repair_stations():
     return response, 200
 
 
+@has_role(['locations_admin', 'reserve'])
 def get_single_repair_station(repair_station_id):
     response = {'message': None, 'repair_station': None}
     repair_station = db.session.query(RepairStation).filter_by(id=repair_station_id).first()
@@ -57,6 +46,7 @@ def get_single_repair_station(repair_station_id):
         return response, 404
 
 
+@has_role(['locations_admin'])
 def add_repair_station(repair_station_body):
     response = {'message': None, 'repair_station': None}
     invalid_parameters = validate_request(repair_station_body)
@@ -106,6 +96,7 @@ def add_repair_station(repair_station_body):
             return response, 200
 
 
+@has_role(['locations_admin'])
 def edit_repair_station(repair_station_id, repair_station_body):
     response = {'message': None, 'repair_station': None}
     repair_station = db.session.query(RepairStation).filter_by(id=repair_station_id).first()
@@ -132,6 +123,7 @@ def edit_repair_station(repair_station_id, repair_station_body):
         return response, 404
 
 
+@has_role(['locations_admin'])
 def delete_repair_station(repair_station_id):
     response = {'message': None}
     repair_station = db.session.query(RepairStation).filter_by(id=repair_station_id).first()
