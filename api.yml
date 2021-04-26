@@ -14,7 +14,7 @@ paths:
   /bicycle_stores/all:
     get:
       tags: [ Bicycle store ]
-      operationId: endpoints.bicycle_store_endpoints.get_all_bicycle_stores
+      operationId: app.get_all_bicycle_stores
       summary: Endpoint for reading all registered bicycle stores
       responses:
         200:
@@ -24,7 +24,7 @@ paths:
   /bicycle_stores/{store_id}:
     get:
       tags: [ Bicycle store ]
-      operationId: endpoints.bicycle_store_endpoints.get_single_bicycle_store
+      operationId: app.get_single_bicycle_store
       summary: Endpoint for reading only 1 bicycle store, defined by its "id"
       parameters:
         - $ref: '#/parameters/store_id'
@@ -36,7 +36,7 @@ paths:
   /bicycle_stores/new:
     post:
       tags: [ Bicycle store ]
-      operationId: endpoints.bicycle_store_endpoints.add_bicycle_store
+      operationId: app.add_bicycle_store
       summary: Endpoint for creating a new bicycle store
       parameters:
         - $ref: '#/parameters/bicycle_store_body'
@@ -48,7 +48,7 @@ paths:
   /bicycle_stores/{store_id}/edit:
     put:
       tags: [ Bicycle store ]
-      operationId: endpoints.bicycle_store_endpoints.edit_bicycle_store
+      operationId: app.edit_bicycle_store
       summary: Endpoint for updating an existing bicycle store
       parameters:
         - $ref: '#/parameters/store_id'
@@ -61,7 +61,7 @@ paths:
   /bicycle_stores/{store_id}/delete:
     delete:
       tags: [ Bicycle store ]
-      operationId: endpoints.bicycle_store_endpoints.delete_bicycle_store
+      operationId: app.delete_bicycle_store
       summary: Endpoint for deleting an existing bicycle store
       parameters:
         - $ref: '#/parameters/store_id'
@@ -73,7 +73,7 @@ paths:
   /parking_zones/all:
     get:
       tags: [ Parking zone ]
-      operationId: endpoints.parking_zone_endpoints.get_all_parking_zones
+      operationId: app.get_all_parking_zones
       summary: Endpoint for reading all registered parking zones
       responses:
         200:
@@ -81,7 +81,7 @@ paths:
   /parking_zones/free_space:
     get:
       tags: [ Parking zone ]
-      operationId: endpoints.parking_zone_endpoints.get_parking_zones_with_free_space
+      operationId: app.get_parking_zones_with_free_space
       summary: Endpoint for reading all registered parking zones with at least 1 available parking spot
       responses:
         200:
@@ -89,7 +89,7 @@ paths:
   /parking_zones/{parking_zone_id}:
     get:
       tags: [ Parking zone ]
-      operationId: endpoints.parking_zone_endpoints.get_single_parking_zone
+      operationId: app.get_single_parking_zone
       summary: Endpoint for reading only 1 registered parking zone, defined by its "id"
       parameters:
         - $ref: '#/parameters/parking_zone_id'
@@ -101,7 +101,7 @@ paths:
   /parking_zones/new:
     post:
       tags: [ Parking zone ]
-      operationId: endpoints.parking_zone_endpoints.add_parking_zone
+      operationId: app.add_parking_zone
       summary: Endpoint for creating a new parking zone
       parameters:
         - $ref: '#/parameters/parking_zone_body'
@@ -115,7 +115,7 @@ paths:
   /parking_zones/{parking_zone_id}/edit:
     put:
       tags: [ Parking zone ]
-      operationId: endpoints.parking_zone_endpoints.edit_parking_zone
+      operationId: app.edit_parking_zone
       summary: Endpoint for updating an existing parking zone
       parameters:
         - $ref: '#/parameters/parking_zone_id'
@@ -130,7 +130,7 @@ paths:
   /parking_zones/{parking_zone_id}/delete:
     delete:
       tags: [ Parking zone ]
-      operationId: endpoints.parking_zone_endpoints.delete_parking_zone
+      operationId: app.delete_parking_zone
       summary: Endpoint for deleting an existing parking zone
       parameters:
         - $ref: '#/parameters/parking_zone_id'
@@ -142,7 +142,7 @@ paths:
   /parking_spots/free:
     get:
       tags: [ Parking spot ]
-      operationId: endpoints.parking_spot_endpoints.get_all_free_parking_spots
+      operationId: app.get_all_free_parking_spots
       summary: Endpoint for reading all registered parking spots that are currently available
       responses:
         200:
@@ -150,7 +150,7 @@ paths:
   /parking_spots/free/{parking_zone_id}:
     get:
       tags: [ Parking spot ]
-      operationId: endpoints.parking_spot_endpoints.get_free_parking_spots_per_zone
+      operationId: app.get_free_parking_spots_per_zone
       summary: Endpoint for reading all registered parking spots that are currently available in the specified parking zone
       parameters:
         - $ref: '#/parameters/parking_zone_id'
@@ -162,7 +162,7 @@ paths:
   /parking_spots/{parking_spot_id}/reserve/{parking_zone_id}:
     put:
       tags: [ Parking spot ]
-      operationId: endpoints.parking_spot_endpoints.reserve_parking_spot
+      operationId: app.reserve_parking_spot
       summary: Endpoint for reserving 1 parking spot in the specified parking zone
       parameters:
         - $ref: '#/parameters/parking_spot_id'
@@ -175,7 +175,7 @@ paths:
   /parking_spots/{parking_spot_id}/free/{parking_zone_id}:
     put:
       tags: [ Parking spot ]
-      operationId: endpoints.parking_spot_endpoints.free_parking_spot
+      operationId: app.free_parking_spot
       summary: Endpoint for freeing 1 parking spot in the specified parking zone
       parameters:
         - $ref: '#/parameters/parking_spot_id'
@@ -188,7 +188,7 @@ paths:
   /parking_spots/new/{parking_zone_id}:
     post:
       tags: [ Parking spot ]
-      operationId: endpoints.parking_spot_endpoints.add_parking_spot
+      operationId: app.add_parking_spot
       summary: Endpoint for creating a new parking spot, in the specified parking zone
       parameters:
         - $ref: '#/parameters/parking_zone_id'
@@ -202,7 +202,7 @@ paths:
   /parking_spots/{parking_spot_id}/delete/{parking_zone_id}:
     delete:
       tags: [ Parking spot ]
-      operationId: endpoints.parking_spot_endpoints.delete_parking_spot
+      operationId: app.delete_parking_spot
       summary: Endpoint for deleting an existing parking spot
       parameters:
         - $ref: '#/parameters/parking_spot_id'
@@ -215,7 +215,7 @@ paths:
   /repair_stations/all:
     get:
       tags: [ Repair station ]
-      operationId: endpoints.repair_station_endpoints.get_all_repair_stations
+      operationId: app.get_all_repair_stations
       summary: Endpoint for reading all registered repair stations
       responses:
         200:
@@ -225,7 +225,7 @@ paths:
   /repair_stations/{repair_station_id}:
     get:
       tags: [ Repair station ]
-      operationId: endpoints.repair_station_endpoints.get_single_repair_station
+      operationId: app.get_single_repair_station
       summary: Endpoint for reading only 1 repair station, defined by its "id"
       parameters:
         - $ref: '#/parameters/repair_station_id'
@@ -237,7 +237,7 @@ paths:
   /repair_stations/new:
     post:
       tags: [ Repair station ]
-      operationId: endpoints.repair_station_endpoints.add_repair_station
+      operationId: app.add_repair_station
       summary: Endpoint for creating a new repair station
       parameters:
         - $ref: '#/parameters/repair_station_body'
@@ -249,7 +249,7 @@ paths:
   /repair_stations/{repair_station_id}/edit:
     put:
       tags: [ Repair station ]
-      operationId: endpoints.repair_station_endpoints.edit_repair_station
+      operationId: app.edit_repair_station
       summary: Endpoint for updating an existing repair station
       parameters:
         - $ref: '#/parameters/repair_station_id'
@@ -262,7 +262,7 @@ paths:
   /repair_stations/{repair_station_id}/delete:
     delete:
       tags: [ Repair station ]
-      operationId: endpoints.repair_station_endpoints.delete_repair_station
+      operationId: app.delete_repair_station
       summary: Endpoint for deleting an existing repair station
       parameters:
         - $ref: '#/parameters/repair_station_id'
