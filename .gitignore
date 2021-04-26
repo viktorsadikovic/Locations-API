@@ -1,5 +1,4 @@
 venv
 .idea
 app.db
-migrations
 __pycache__
