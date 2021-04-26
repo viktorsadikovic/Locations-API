@@ -8,68 +8,385 @@ consumes:
   - application/json
 produces:
   - application/json
-basePath: "/api/locations"
-#paths:
-#  /test1/{test1_id}:
-#    get:
-#      tags: [ Test1 ]
-#      operationId: app.get_test1
-#      summary: Testing endpoint
-#      parameters:
-#        - $ref: '#/parameters/test1_id'
-#      responses:
-#        200:
-#          description: Return test1
-#        404:
-#          description: Does not exist
-#  /person/:
-#    post:
-#      tags: [ Person ]
-#      operationId: app.person_add
-#      parameters:
-#        - $ref: '#/parameters/person_body'
-#      responses:
-#        200:
-#          description: Return status
-#        409:
-#          description: Already exists
-#  /person/{person_name}:
-#    get:
-#      tags: [ Person ]
-#      operationId: app.person_find
-#      parameters:
-#        - $ref: '#/parameters/person_name'
-#      responses:
-#        200:
-#          description: Return person object
-#        404:
-#          description: Person not found
 
-#parameters:
-#  test1_id:
-#    name: test1_id
-#    description: Test1 unique id
-#    in: path
-#    type: string
-#    required: true
-#    pattern: "^[a-zA-Z0-9-]+$"
-#
-#  person_body:
-#    name: person_body
-#    description: Test1 unique id
-#    in: body
-#    schema:
-#      required:
-#        - name
-#      properties:
-#        name:
-#          type: string
-#        surname:
-#          type: string
-#
-#  person_name:
-#    name: person_name
-#    description: The name of the person we're looking for
-#    in: path
-#    required: true
-#    type: string
+basePath: "/api/locations"
+paths:
+  /bicycle_stores/all:
+    get:
+      tags: [ Bicycle store ]
+      operationId: endpoints.bicycle_store_endpoints.get_all_bicycle_stores
+      summary: Endpoint for reading all registered bicycle stores
+      responses:
+        200:
+          description: Return list of Bicycle_store objects
+        404:
+          description: Does not exist
+  /bicycle_stores/{store_id}:
+    get:
+      tags: [ Bicycle store ]
+      operationId: endpoints.bicycle_store_endpoints.get_single_bicycle_store
+      summary: Endpoint for reading only 1 bicycle store, defined by its "id"
+      parameters:
+        - $ref: '#/parameters/store_id'
+      responses:
+        200:
+          description: Return Bicycle_store object
+        404:
+          description: Does not exist
+  /bicycle_stores/new:
+    post:
+      tags: [ Bicycle store ]
+      operationId: endpoints.bicycle_store_endpoints.add_bicycle_store
+      summary: Endpoint for creating a new bicycle store
+      parameters:
+        - $ref: '#/parameters/bicycle_store_body'
+      responses:
+        200:
+          description: Return status
+        409:
+          description: Already exists
+  /bicycle_stores/{store_id}/edit:
+    put:
+      tags: [ Bicycle store ]
+      operationId: endpoints.bicycle_store_endpoints.edit_bicycle_store
+      summary: Endpoint for updating an existing bicycle store
+      parameters:
+        - $ref: '#/parameters/store_id'
+        - $ref: '#/parameters/bicycle_store_body'
+      responses:
+        200:
+          description: Bicycle store was successfully changed
+        404:
+          description: Does not exist
+  /bicycle_stores/{store_id}/delete:
+    delete:
+      tags: [ Bicycle store ]
+      operationId: endpoints.bicycle_store_endpoints.delete_bicycle_store
+      summary: Endpoint for deleting an existing bicycle store
+      parameters:
+        - $ref: '#/parameters/store_id'
+      responses:
+        200:
+          description: Bicycle store was successfully deleted
+        404:
+          description: Does not exist
+  /parking_zones/all:
+    get:
+      tags: [ Parking zone ]
+      operationId: endpoints.parking_zone_endpoints.get_all_parking_zones
+      summary: Endpoint for reading all registered parking zones
+      responses:
+        200:
+          description: OK
+  /parking_zones/free_space:
+    get:
+      tags: [ Parking zone ]
+      operationId: endpoints.parking_zone_endpoints.get_parking_zones_with_free_space
+      summary: Endpoint for reading all registered parking zones with at least 1 available parking spot
+      responses:
+        200:
+          description: OK
+  /parking_zones/{parking_zone_id}:
+    get:
+      tags: [ Parking zone ]
+      operationId: endpoints.parking_zone_endpoints.get_single_parking_zone
+      summary: Endpoint for reading only 1 registered parking zone, defined by its "id"
+      parameters:
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /parking_zones/new:
+    post:
+      tags: [ Parking zone ]
+      operationId: endpoints.parking_zone_endpoints.add_parking_zone
+      summary: Endpoint for creating a new parking zone
+      parameters:
+        - $ref: '#/parameters/parking_zone_body'
+      responses:
+        200:
+          description: OK
+        400:
+          description: BAD_REQUEST
+        409:
+          description: ALREADY_EXISTS
+  /parking_zones/{parking_zone_id}/edit:
+    put:
+      tags: [ Parking zone ]
+      operationId: endpoints.parking_zone_endpoints.edit_parking_zone
+      summary: Endpoint for updating an existing parking zone
+      parameters:
+        - $ref: '#/parameters/parking_zone_id'
+        - $ref: '#/parameters/parking_zone_body'
+      responses:
+        200:
+          description: OK
+        400:
+          description: BAD_REQUEST
+        404:
+          description: NOT_FOUND
+  /parking_zones/{parking_zone_id}/delete:
+    delete:
+      tags: [ Parking zone ]
+      operationId: endpoints.parking_zone_endpoints.delete_parking_zone
+      summary: Endpoint for deleting an existing parking zone
+      parameters:
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /parking_spots/free:
+    get:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.get_all_free_parking_spots
+      summary: Endpoint for reading all registered parking spots that are currently available
+      responses:
+        200:
+          description: OK
+  /parking_spots/free/{parking_zone_id}:
+    get:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.get_free_parking_spots_per_zone
+      summary: Endpoint for reading all registered parking spots that are currently available in the specified parking zone
+      parameters:
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /parking_spots/{parking_spot_id}/reserve/{parking_zone_id}:
+    put:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.reserve_parking_spot
+      summary: Endpoint for reserving 1 parking spot in the specified parking zone
+      parameters:
+        - $ref: '#/parameters/parking_spot_id'
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /parking_spots/{parking_spot_id}/free/{parking_zone_id}:
+    put:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.free_parking_spot
+      summary: Endpoint for freeing 1 parking spot in the specified parking zone
+      parameters:
+        - $ref: '#/parameters/parking_spot_id'
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /parking_spots/new/{parking_zone_id}:
+    post:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.add_parking_spot
+      summary: Endpoint for creating a new parking spot, in the specified parking zone
+      parameters:
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        400:
+          description: BAD_REQUEST
+        404:
+          description: NOT_FOUND
+  /parking_spots/{parking_spot_id}/delete/{parking_zone_id}:
+    delete:
+      tags: [ Parking spot ]
+      operationId: endpoints.parking_spot_endpoints.delete_parking_spot
+      summary: Endpoint for deleting an existing parking spot
+      parameters:
+        - $ref: '#/parameters/parking_spot_id'
+        - $ref: '#/parameters/parking_zone_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /repair_stations/all:
+    get:
+      tags: [ Repair station ]
+      operationId: endpoints.repair_station_endpoints.get_all_repair_stations
+      summary: Endpoint for reading all registered repair stations
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /repair_stations/{repair_station_id}:
+    get:
+      tags: [ Repair station ]
+      operationId: endpoints.repair_station_endpoints.get_single_repair_station
+      summary: Endpoint for reading only 1 repair station, defined by its "id"
+      parameters:
+        - $ref: '#/parameters/repair_station_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /repair_stations/new:
+    post:
+      tags: [ Repair station ]
+      operationId: endpoints.repair_station_endpoints.add_repair_station
+      summary: Endpoint for creating a new repair station
+      parameters:
+        - $ref: '#/parameters/repair_station_body'
+      responses:
+        200:
+          description: OK
+        409:
+          description: ALREADY_EXISTS
+  /repair_stations/{repair_station_id}/edit:
+    put:
+      tags: [ Repair station ]
+      operationId: endpoints.repair_station_endpoints.edit_repair_station
+      summary: Endpoint for updating an existing repair station
+      parameters:
+        - $ref: '#/parameters/repair_station_id'
+        - $ref: '#/parameters/repair_station_body'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+  /repair_stations/{repair_station_id}/delete:
+    delete:
+      tags: [ Repair station ]
+      operationId: endpoints.repair_station_endpoints.delete_repair_station
+      summary: Endpoint for deleting an existing repair station
+      parameters:
+        - $ref: '#/parameters/repair_station_id'
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOT_FOUND
+
+parameters:
+  store_id:
+    name: store_id
+    description: Store id
+    in: path
+    type: integer
+    required: true
+  bicycle_store_body:
+    name: bicycle_store_body
+    description: bicycle_store_body
+    in: body
+    schema:
+      required:
+        - name
+        - street_name
+        - street_number
+        - city_name
+        - city_postal_code
+        - country
+        - latitude
+        - longitude
+      properties:
+        name:
+          type: string
+        street_name:
+          type: string
+        street_number:
+          type: integer
+        city_name:
+          type: string
+        city_postal_code:
+          type: integer
+        country:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+  parking_zone_id:
+    name: parking_zone_id
+    description: The "id" parameter of the parking zone object
+    in: path
+    type: integer
+    required: true
+  parking_zone_body:
+    name: parking_zone_body
+    description: The request body for creating and updating a parking zone object
+    in: body
+    schema:
+      required:
+        - capacity
+        - street_name
+        - street_number
+        - city_name
+        - city_postal_code
+        - country
+        - latitude
+        - longitude
+      properties:
+        capacity:
+          type: integer
+        street_name:
+          type: string
+        street_number:
+          type: integer
+        city_name:
+          type: string
+        city_postal_code:
+          type: integer
+        country:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+  parking_spot_id:
+    name: parking_spot_id
+    description: The "id" parameter of the parking spot object
+    in: path
+    type: integer
+    required: true
+  repair_station_id:
+    name: repair_station_id
+    description: The "id" parameter of the repair station object
+    in: path
+    type: integer
+    required: true
+  repair_station_body:
+    name: repair_station_body
+    description: The request body for creating and updating a repair station object
+    in: body
+    schema:
+      required:
+        - available
+        - street_name
+        - street_number
+        - city_name
+        - city_postal_code
+        - country
+        - latitude
+        - longitude
+      properties:
+        available:
+          type: boolean
+        street_name:
+          type: string
+        street_number:
+          type: integer
+        city_name:
+          type: string
+        city_postal_code:
+          type: integer
+        country:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
