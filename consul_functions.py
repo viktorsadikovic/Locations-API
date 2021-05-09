@@ -7,17 +7,10 @@ SERVICE_PORT = 5000
 
 
 def get_host_name_IP():
-    host_name_ip = ""
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
 
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        host_name_ip = s.getsockname()[0]
-        s.close()
-
-        return host_name_ip
-    except:
-        print("Unable to get Hostname")
+    return local_ip
 
 
 def register_to_consul():
@@ -29,7 +22,8 @@ def register_to_consul():
 
     ip = get_host_name_IP()
 
-    check = Check.http(f"http://{ip}:{SERVICE_PORT}/api/ui", interval="10s", timeout="5s", deregister="1s")
+    check = Check.http(f"http://{ip}:{SERVICE_PORT}/api/{SERVICE_NAME}/ui", interval="10s", timeout="5s",
+                       deregister="1s")
 
     service.register(name=SERVICE_NAME, service_id=SERVICE_NAME, address=ip, port=SERVICE_PORT, check=check)
 

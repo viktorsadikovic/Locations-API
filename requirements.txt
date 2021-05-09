@@ -5,3 +5,4 @@ connexion[swagger-ui]
 sqlalchemy
 marshmallow
 marshmallow-sqlalchemy
+python-consul
