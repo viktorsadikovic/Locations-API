@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import jwt
 from functools import wraps
 from flask import request, abort
+from consul_functions import *
 
 JWT_SECRET = 'MY JWT SECRET'
 
@@ -599,6 +600,8 @@ bicycle_store_schema = models.BicycleStoreSchema()
 parking_spot_schema = models.ParkingSpotSchema()
 parking_zone_schema = models.ParkingZoneSchema()
 repair_station_schema = models.RepairStationSchema()
+
+register_to_consul()
 
 if __name__ == "__main__":
     connexion_app.run(host='0.0.0.0', port=5000, debug=True)
