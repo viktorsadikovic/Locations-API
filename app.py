@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import jwt
 from functools import wraps
 from flask import request, abort
-from consul_functions import *
+from consul_functions import get_host_name_IP, get_consul_service, register_to_consul
 
 JWT_SECRET = 'MY JWT SECRET'
 
@@ -68,7 +68,7 @@ def decode_token(token):
     return jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
 
 
-@has_role(['locations_admin', 'shipping'])
+@has_role(['locations', 'shipping'])
 def get_all_bicycle_stores():
     response = {'message': None, 'bicycle_stores': None}
     bicycle_stores = db.session.query(models.BicycleStore).all()
@@ -79,7 +79,7 @@ def get_all_bicycle_stores():
     return response, 200
 
 
-@has_role(['locations_admin', 'shipping'])
+@has_role(['locations', 'shipping'])
 def get_single_bicycle_store(store_id):
     response = {'message': None, 'bicycle_store': None}
     bicycle_store = db.session.query(models.BicycleStore).filter_by(id=store_id).first()
@@ -95,7 +95,7 @@ def get_single_bicycle_store(store_id):
         return response, 400
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def add_bicycle_store(bicycle_store_body):
     response = {'message': None, 'bicycle_store': None}
     invalid_parameters = validate_request(bicycle_store_body)
@@ -146,7 +146,7 @@ def add_bicycle_store(bicycle_store_body):
         return response, 200
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def edit_bicycle_store(store_id, bicycle_store_body):
     response = {'message': None, 'bicycle_store': None}
     bicycle_store = db.session.query(models.BicycleStore).filter_by(id=store_id).first()
@@ -173,7 +173,7 @@ def edit_bicycle_store(store_id, bicycle_store_body):
         return response, 400
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def delete_bicycle_store(store_id):
     response = {'message': None}
     bicycle_store = db.session.query(models.BicycleStore).filter_by(id=store_id).first()
@@ -191,7 +191,7 @@ def delete_bicycle_store(store_id):
         return response, 400
 
 
-@has_role(['locations_admin', 'reserve'])
+@has_role(['locations', 'reserve'])
 def get_all_free_parking_spots():
     response = {'message': None, 'parking_spots': None}
     free_parking_spots = db.session.query(models.ParkingSpot).filter_by(available=True).all()
@@ -202,7 +202,7 @@ def get_all_free_parking_spots():
     return response, 200
 
 
-@has_role(['locations_admin', 'reserve'])
+@has_role(['locations', 'reserve'])
 def get_free_parking_spots_per_zone(parking_zone_id):
     response = {'message': None, 'parking_spots': None}
     parking_zone = db.session.query(models.ParkingZone).filter_by(id=parking_zone_id).first()
@@ -220,7 +220,7 @@ def get_free_parking_spots_per_zone(parking_zone_id):
         return response, 404
 
 
-@has_role(['locations_admin', 'reserve'])
+@has_role(['locations', 'reserve'])
 def reserve_parking_spot(parking_zone_id, parking_spot_id):
     response = {'message': None, 'parking_spot': None}
     parking_spot = db.session.query(models.ParkingSpot).filter_by(id=parking_spot_id,
@@ -243,7 +243,7 @@ def reserve_parking_spot(parking_zone_id, parking_spot_id):
         return response, 404
 
 
-@has_role(['locations_admin', 'reserve'])
+@has_role(['locations', 'reserve'])
 def free_parking_spot(parking_zone_id, parking_spot_id):
     response = {'message': None, 'parking_spot': None}
     parking_spot = db.session.query(models.ParkingSpot).filter_by(id=parking_spot_id,
@@ -266,7 +266,7 @@ def free_parking_spot(parking_zone_id, parking_spot_id):
         return response, 404
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def add_parking_spot(parking_zone_id):
     response = {'message': None, 'parking_spot': None}
     parking_zone = db.session.query(models.ParkingZone).filter_by(id=parking_zone_id).first()
@@ -295,7 +295,7 @@ def add_parking_spot(parking_zone_id):
         return response, 404
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def delete_parking_spot(parking_zone_id, parking_spot_id):
     response = {'message': None}
     parking_spot = db.session.query(models.ParkingSpot).filter_by(id=parking_spot_id,
@@ -316,7 +316,7 @@ def delete_parking_spot(parking_zone_id, parking_spot_id):
         return response, 404
 
 
-@has_role(['locations_admin', 'reserve'])
+@has_role(['locations', 'reserve'])
 def get_all_parking_zones():
     response = {'message': None, 'parking_zones': None}
     parking_zones = db.session.query(models.ParkingZone).all()
@@ -327,7 +327,7 @@ def get_all_parking_zones():
     return response, 200
 
 
-@has_role(['locations_admin', 'reserve'])
+@has_role(['locations', 'reserve'])
 def get_parking_zones_with_free_space():
     response = {'message': None, 'parking_zones': None}
     all_parking_zones = db.session.query(models.ParkingZone).all()
@@ -345,7 +345,7 @@ def get_parking_zones_with_free_space():
     return response, 200
 
 
-@has_role(['locations_admin', 'reserve'])
+@has_role(['locations', 'reserve'])
 def get_single_parking_zone(parking_zone_id):
     response = {'message': None, 'parking_zone': None}
     parking_zone = db.session.query(models.ParkingZone).filter_by(id=parking_zone_id).first()
@@ -361,7 +361,7 @@ def get_single_parking_zone(parking_zone_id):
         return response, 404
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def add_parking_zone(parking_zone_body):
     response = {'message': None, 'parking_zone': None}
     invalid_parameters = validate_request(parking_zone_body)
@@ -411,7 +411,7 @@ def add_parking_zone(parking_zone_body):
             return response, 200
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def edit_parking_zone(parking_zone_id, parking_zone_body):
     response = {'message': None, 'parking_zone': None}
     parking_zone = db.session.query(models.ParkingZone).filter_by(id=parking_zone_id).first()
@@ -438,7 +438,7 @@ def edit_parking_zone(parking_zone_id, parking_zone_body):
         return response, 404
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def delete_parking_zone(parking_zone_id):
     response = {'message': None}
     parking_zone = db.session.query(models.ParkingZone).filter_by(id=parking_zone_id).first()
@@ -456,7 +456,7 @@ def delete_parking_zone(parking_zone_id):
         return response, 404
 
 
-@has_role(['locations_admin', 'reserve'])
+@has_role(['locations', 'reserve'])
 def get_all_repair_stations():
     response = {'message': None, 'repair_stations': None}
     repair_stations = db.session.query(models.RepairStation).all()
@@ -467,7 +467,7 @@ def get_all_repair_stations():
     return response, 200
 
 
-@has_role(['locations_admin', 'reserve'])
+@has_role(['locations', 'reserve'])
 def get_available_repair_stations():
     response = {'message': None, 'repair_stations': None}
     all_repair_stations = db.session.query(models.RepairStation).all()
@@ -480,7 +480,7 @@ def get_available_repair_stations():
     return response, 200
 
 
-@has_role(['locations_admin', 'reserve'])
+@has_role(['locations', 'reserve'])
 def get_single_repair_station(repair_station_id):
     response = {'message': None, 'repair_station': None}
     repair_station = db.session.query(models.RepairStation).filter_by(id=repair_station_id).first()
@@ -496,7 +496,7 @@ def get_single_repair_station(repair_station_id):
         return response, 404
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def add_repair_station(repair_station_body):
     response = {'message': None, 'repair_station': None}
     invalid_parameters = validate_request(repair_station_body)
@@ -546,7 +546,7 @@ def add_repair_station(repair_station_body):
             return response, 200
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def edit_repair_station(repair_station_id, repair_station_body):
     response = {'message': None, 'repair_station': None}
     repair_station = db.session.query(models.RepairStation).filter_by(id=repair_station_id).first()
@@ -573,7 +573,7 @@ def edit_repair_station(repair_station_id, repair_station_body):
         return response, 404
 
 
-@has_role(['locations_admin'])
+@has_role(['locations'])
 def delete_repair_station(repair_station_id):
     response = {'message': None}
     repair_station = db.session.query(models.RepairStation).filter_by(id=repair_station_id).first()
@@ -594,14 +594,14 @@ def delete_repair_station(repair_station_id):
 
 connexion_app.add_api("api.yml")
 
+register_to_consul()
+
 import models
 
 bicycle_store_schema = models.BicycleStoreSchema()
 parking_spot_schema = models.ParkingSpotSchema()
 parking_zone_schema = models.ParkingZoneSchema()
 repair_station_schema = models.RepairStationSchema()
-
-register_to_consul()
 
 if __name__ == "__main__":
     connexion_app.run(host='0.0.0.0', port=5000, debug=True)
