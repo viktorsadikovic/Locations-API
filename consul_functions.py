@@ -7,10 +7,16 @@ SERVICE_PORT = 5000
 
 
 def get_host_name_IP():
-    hostname = socket.gethostname()
-    local_ip = socket.gethostbyname(hostname)
-
-    return local_ip
+    host_name_ip = ""
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        host_name_ip = s.getsockname()[0]
+        s.close()
+        # print ("Host ip:", host_name_ip)
+        return host_name_ip
+    except:
+        print("Unable to get Hostname")
 
 
 def register_to_consul():
